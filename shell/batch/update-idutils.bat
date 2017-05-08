@@ -2,7 +2,7 @@
 rem create ID
 echo Creating ID...
 
-set MKID_CMD="%TOOLS%\windows\mkid.exe"
+set MKID_CMD="%TOOLS%\bin\mkid.exe"
 if not exist %MKID_CMD% (
     set MKID_CMD=mkid
 )

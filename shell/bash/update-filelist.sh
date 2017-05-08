@@ -18,10 +18,16 @@ echo "  |- generate ${TMP}"
 
 if test "${FOLDERS}" != ""; then
     find ${FORCE_POSIX_REGEX_1} . -type f -not -path "*/\.*" ${FORCE_POSIX_REGEX_2} ${IS_EXCLUDE} -regex ".*/("${FOLDERS}")/.*" ${FORCE_POSIX_REGEX_2} -regex ".*\.("${FILE_SUFFIXS}")$" > "${TMP}"
-    # no suffix files, such as Makefile makefile
-     find ${FORCE_POSIX_REGEX_1} . -type f -not -path "*/\.*" ${FORCE_POSIX_REGEX_2} ${IS_EXCLUDE} -regex ".*/("${FOLDERS}")/.*" ${FORCE_POSIX_REGEX_2}  |grep  -v  "\.\w*$" | xargs -i sh -c 'file="{}";type=$(file $file);[[ $type =~ "text" ]] && echo $file' >> "${TMP}"
+    if [[ "${FILE_SUFFIXS}" =~ __EMPTY__ ]]; then
+        # no suffix files, such as Makefile makefile
+        # find ${FORCE_POSIX_REGEX_1} . -type f -not -path "*/\.*" ${FORCE_POSIX_REGEX_2} ${IS_EXCLUDE} -regex ".*/("${FOLDERS}")/.*" ${FORCE_POSIX_REGEX_2}  |grep  -v  "\.\w*$" >> "${TMP}"
+        find ${FORCE_POSIX_REGEX_1} . -type f -not -path "*/\.*" ${FORCE_POSIX_REGEX_2} ${IS_EXCLUDE} -regex ".*/("${FOLDERS}")/.*" ${FORCE_POSIX_REGEX_2}  |grep  -v  "\.\w*$" |xargs -i sh -c 'file="{}";type=$(file $file);[[ $type =~ "text" ]] && echo $file' >> "${TMP}"
+    fi
 else
     find ${FORCE_POSIX_REGEX_1} . -type f -not -path "*/\.*" ${FORCE_POSIX_REGEX_2} -regex ".*\.("${FILE_SUFFIXS}")$" > "${TMP}"
+    if [[ "${FILE_SUFFIXS}" =~ __EMPTY__ ]]; then
+        find ${FORCE_POSIX_REGEX_1} . -type f -not -path "*/\.*" |grep  -v  "\.\w*$" |xargs -i sh -c 'file="{}";type=$(file $file);[[ $type =~ "text" ]] && echo $file' >> "${TMP}"
+    fi
 fi
 
 # DISABLE
@@ -42,6 +48,10 @@ fi
 if [ -f "${TARGET}" ]; then
     echo "  |- generate ${ID_TARGET}"
     gawk -f "${TOOLS}/gawk/null-terminal-files.awk" "${TARGET}">"${ID_TARGET}"
+    # create filenametags
+    echo "  |- generate ${FTAG_TARGET}"
+    gawk -f "${TOOLS}/gawk/prg_FilenameTagLinux.awk" "${TARGET}">"${FTAG_TARGET}"
 fi
+
 
 echo "  |- done!"

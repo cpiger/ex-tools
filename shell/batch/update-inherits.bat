@@ -1,7 +1,7 @@
 rem create inherits
 echo Creating Inherits...
 
-set GAWK_CMD="%TOOLS%\windows\gawk.exe"
+set GAWK_CMD="%TOOLS%\bin\gawk.exe"
 if not exist %GAWK_CMD% (
     set GAWK_CMD=gawk
 )
